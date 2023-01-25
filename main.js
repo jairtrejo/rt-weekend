@@ -10,7 +10,7 @@ canvas.height = HEIGHT;
 
 const pixels = new Uint8ClampedArray(WIDTH * HEIGHT * 4);
 
-const worker = new Worker("worker.js");
+const worker = new Worker(new URL("./worker.js", import.meta.url), {type: 'module'});
 
 worker.onmessage = function (e) {
   const { progress, pixels } = e.data;

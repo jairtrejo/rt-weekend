@@ -1,20 +1,20 @@
+import { Color } from './vec3.js';
+import { writeColor } from './color.js';
+
 onmessage = function (e) {
   const { WIDTH, HEIGHT, pixels } = e.data;
 
+  let idx = 0;
   for (let j = HEIGHT - 1; j >= 0; --j) {
     if (j % 15 === 0) {
-      postMessage({ progress: Math.round(100 * (HEIGHT - j) / HEIGHT) });
+      postMessage({ progress: Math.round((100 * (HEIGHT - j)) / HEIGHT) });
     }
     for (let i = 0; i < WIDTH; ++i) {
       let r = Math.floor((256 * i) / (WIDTH - 1));
-      let g = Math.floor((256 * (HEIGHT - j)) / (HEIGHT - 1));
+      let g = Math.floor((256 * j) / (HEIGHT - 1));
       let b = Math.floor(256 * 0.25);
 
-      const idx = (j * WIDTH + i) * 4;
-      pixels[idx] = r;
-      pixels[idx + 1] = g;
-      pixels[idx + 2] = b;
-      pixels[idx + 3] = 255;
+      idx = writeColor(pixels, idx, new Color(r, g, b));
     }
   }
 
