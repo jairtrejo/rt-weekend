@@ -1,5 +1,6 @@
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
+const canvas = document.getElementById("canvas");
+const progressIndicator = document.getElementById("progress");
+const ctx = canvas.getContext("2d");
 
 const WIDTH = 256;
 const HEIGHT = 256;
@@ -7,21 +8,18 @@ const HEIGHT = 256;
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
 
-const arrayBuffer = new ArrayBuffer(WIDTH * HEIGHT * 4);
-const pixels = new Uint8ClampedArray(arrayBuffer);
+const pixels = new Uint8ClampedArray(WIDTH * HEIGHT * 4);
 
-for (let j = HEIGHT - 1; j >= 0; --j) {
-  for (let i = 0; i < WIDTH; ++i) {
-    let r = Math.floor(256 * i / (WIDTH - 1));
-    let g = Math.floor(256 * (HEIGHT - j) / (HEIGHT - 1));
-    let b = Math.floor(256 * 0.25);
+const worker = new Worker("worker.js");
 
-    const idx  = (j * WIDTH + i) * 4;
-    pixels[idx] = r;
-    pixels[idx+1] = g;
-    pixels[idx+2] = b;
-    pixels[idx+3] = 255;
+worker.onmessage = function (e) {
+  const { progress, pixels } = e.data;
+
+  if (pixels) {
+    ctx.putImageData(new ImageData(pixels, WIDTH, HEIGHT), 0, 0);
+  } else {
+    progressIndicator.innerText = `${progress}%`;
   }
-}
+};
 
-ctx.putImageData(new ImageData(pixels, WIDTH, HEIGHT), 0, 0);
+worker.postMessage({ WIDTH, HEIGHT, pixels }, [pixels.buffer]);
