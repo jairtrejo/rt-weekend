@@ -46,12 +46,28 @@ export const Point3 = Vec3;
 
 // Utility functions
 
-export function add(u, v) {
-  return new Vec3(u.x + v.x, u.y + v.y, u.z + v.z);
+export function add(...vs) {
+  const result = new Vec3();
+  for (const v of vs) {
+    result.e[0] += v.x;
+    result.e[1] += v.y;
+    result.e[2] += v.z;
+  }
+  return result;
 }
 
-export function sub(u, v) {
-  return new Vec3(u.x - v.x, u.y - v.y, u.z - v.z);
+export function sub(...vs) {
+  const result = new Vec3();
+  result.e[0] = vs[0].x;
+  result.e[1] = vs[0].y;
+  result.e[2] = vs[0].z;
+
+  for (const v of vs.slice(1)) {
+    result.e[0] -= v.x;
+    result.e[1] -= v.y;
+    result.e[2] -= v.z;
+  }
+  return result;
 }
 
 export function mul(a, b) {

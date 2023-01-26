@@ -2,15 +2,17 @@ const canvas = document.getElementById("canvas");
 const progressIndicator = document.getElementById("progress");
 const ctx = canvas.getContext("2d");
 
-const WIDTH = 256;
-const HEIGHT = 256;
+const WIDTH = 512;
+const HEIGHT = 288;
 
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
 
 const pixels = new Uint8ClampedArray(WIDTH * HEIGHT * 4);
 
-const worker = new Worker(new URL("./worker.js", import.meta.url), {type: 'module'});
+const worker = new Worker(new URL("./worker.js", import.meta.url), {
+  type: "module",
+});
 
 worker.onmessage = function (e) {
   const { progress, pixels } = e.data;
@@ -21,5 +23,11 @@ worker.onmessage = function (e) {
     progressIndicator.innerText = `${progress}%`;
   }
 };
+worker.onerror = function (e) {
+  console.log(e.message);
+};
+console.log(worker);
 
-worker.postMessage({ WIDTH, HEIGHT, pixels }, [pixels.buffer]);
+worker.postMessage({ image_width: WIDTH, image_height: HEIGHT, pixels }, [
+  pixels.buffer,
+]);

@@ -1,4 +1,4 @@
-import { mul, add } from "vec3.js";
+import { mul, add } from "./vec3.js";
 
 export class Ray {
   constructor(origin, direction) {

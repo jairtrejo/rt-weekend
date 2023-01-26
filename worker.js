@@ -1,20 +1,59 @@
-import { Color } from './vec3.js';
-import { writeColor } from './color.js';
+import { add, mul, Color, Point3, Vec3, sub, unit_vector } from "./vec3.js";
+import { writeColor } from "./color.js";
+import { Ray } from "./ray.js";
+
+function ray_color(r) {
+  const unit_direction = unit_vector(r.direction);
+  const t = 0.5 * (unit_direction.y + 1.0);
+  return add(
+    mul(1 - t, new Color(1.0, 1.0, 1.0)),
+    mul(t, new Color(0.5, 0.7, 1.0))
+  );
+  //return new Color(1.0, 0, 0);
+}
 
 onmessage = function (e) {
-  const { WIDTH, HEIGHT, pixels } = e.data;
+  const { image_width, image_height, pixels } = e.data;
+  // Image
+  const aspect_ratio = image_width / image_height;
+
+  // Camera
+  const viewport_height = 2.0;
+  const viewport_width = aspect_ratio * viewport_height;
+  const focal_length = 1.0;
+
+  const origin = new Point3(0, 0, 0);
+  const horizontal = new Vec3(viewport_width, 0, 0);
+  const vertical = new Vec3(0, viewport_height, 0);
+  const lower_left_corner = sub(
+    origin,
+    mul(0.5, horizontal),
+    mul(0.5, vertical),
+    new Vec3(0, 0, focal_length)
+  );
 
   let idx = 0;
-  for (let j = HEIGHT - 1; j >= 0; --j) {
+  for (let j = image_height - 1; j >= 0; --j) {
     if (j % 15 === 0) {
-      postMessage({ progress: Math.round((100 * (HEIGHT - j)) / HEIGHT) });
+      postMessage({
+        progress: Math.round((100 * (image_height - j)) / image_height),
+      });
     }
-    for (let i = 0; i < WIDTH; ++i) {
-      let r = Math.floor((256 * i) / (WIDTH - 1));
-      let g = Math.floor((256 * j) / (HEIGHT - 1));
-      let b = Math.floor(256 * 0.25);
+    for (let i = 0; i < image_width; ++i) {
+      const u = i / (image_width - 1);
+      const v = j / (image_height - 1);
 
-      idx = writeColor(pixels, idx, new Color(r, g, b));
+      const r = new Ray(
+        origin,
+        add(
+          lower_left_corner,
+          mul(u, horizontal),
+          mul(v, vertical),
+          mul(-1, origin)
+        )
+      );
+
+      idx = writeColor(pixels, idx, ray_color(r));
     }
   }
 
