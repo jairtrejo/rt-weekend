@@ -1,29 +1,16 @@
-import {
-  add,
-  mul,
-  Color,
-  Point3,
-  Vec3,
-  sub,
-  unit_vector,
-} from "./vec3.js";
+import { add, mul, Color, Point3, Vec3, sub, unit_vector } from "./vec3.js";
 import { writeColor } from "./color.js";
 import { Ray } from "./ray.js";
-import {Sphere} from "./sphere.js";
-import {HittableList} from "./hittable-list.js";
+import { Sphere } from "./sphere.js";
+import { HittableList } from "./hittable-list.js";
 
-const hittables = new HittableList(
-  new Sphere(new Point3(0, 0, -1), 0.5),
-);
-
-function ray_color(r) {
+function ray_color(r, world) {
   let t;
-  const hitRecord = hittables.hit(r, 0, Number.POSITIVE_INFINITY);
+  const hitRecord = world.hit(r, 0, Number.POSITIVE_INFINITY);
 
-  if (hitRecord !== null) {
+  if (hitRecord) {
     t = hitRecord.t;
-    const N = unit_vector(sub(r.at(t), new Vec3(0, 0, -1)));
-    return mul(0.5, new Color(N.x + 1, N.y + 1, N.z + 1));
+    return mul(0.5, add(hitRecord.normal, new Color(1, 1, 1)));
   }
 
   const unit_direction = unit_vector(r.direction);
@@ -39,7 +26,13 @@ onmessage = function (e) {
   // Camera
   const viewport_height = 2.0;
   const viewport_width = aspect_ratio * viewport_height;
-  const focal_length = 1.0;
+  const focal_length = 1;
+
+  // World
+  const world = new HittableList(
+    new Sphere(new Point3(0, 0, -1), 0.5),
+    new Sphere(new Point3(0, -100.5, -1), 100)
+  );
 
   const origin = new Point3(0, 0, 0);
   const horizontal = new Vec3(viewport_width, 0, 0);
@@ -72,7 +65,7 @@ onmessage = function (e) {
         )
       );
 
-      idx = writeColor(pixels, idx, ray_color(r));
+      idx = writeColor(pixels, idx, ray_color(r, world));
     }
   }
 

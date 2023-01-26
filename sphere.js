@@ -24,7 +24,7 @@ export class Sphere extends Hittable {
     if (root < t_min || t_max < root) {
       root = (-half_b + sqrtd) / a;
       if (root < t_min || t_max < root) {
-        return false;
+        return null;
       }
     }
 
