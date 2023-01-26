@@ -10,12 +10,15 @@ import {
 import { writeColor } from "./color.js";
 import { Ray } from "./ray.js";
 import {Sphere} from "./sphere.js";
+import {HittableList} from "./hittable-list.js";
 
-const s = new Sphere(new Point3(0, 0, -1), 0.5);
+const hittables = new HittableList(
+  new Sphere(new Point3(0, 0, -1), 0.5),
+);
 
 function ray_color(r) {
   let t;
-  const hitRecord = s.hit(r, 0, Number.POSITIVE_INFINITY);
+  const hitRecord = hittables.hit(r, 0, Number.POSITIVE_INFINITY);
 
   if (hitRecord !== null) {
     t = hitRecord.t;
