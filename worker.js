@@ -13,14 +13,14 @@ import { Ray } from "./ray.js";
 
 function hit_sphere(center, radius, r) {
   const oc = sub(r.origin, center);
-  const a = dot(r.direction, r.direction);
-  const b = 2.0 * dot(oc, r.direction);
-  const c = dot(oc, oc) - radius * radius;
-  const discriminant = b * b - 4 * a * c;
+  const a = r.direction.length_squared();
+  const half_b = dot(oc, r.direction);
+  const c = oc.length_squared() - radius * radius;
+  const discriminant = half_b * half_b - a * c;
   if (discriminant < 0) {
     return -1.0;
   } else {
-    return (-b - Math.sqrt(discriminant)) / (2 * a);
+    return (-half_b - Math.sqrt(discriminant)) / a;
   }
 }
 
