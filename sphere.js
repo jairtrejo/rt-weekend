@@ -32,6 +32,6 @@ export class Sphere extends Hittable {
     const p = r.at(root);
     const normal = mul(1 / this.radius, sub(p, this.center));
 
-    return { t, p, normal };
+    return { t, p, ...Hittable.to_face_normal(r, normal) };
   }
 }
