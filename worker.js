@@ -1,7 +1,6 @@
 import {
   add,
   mul,
-  dot,
   Color,
   Point3,
   Vec3,
@@ -10,24 +9,16 @@ import {
 } from "./vec3.js";
 import { writeColor } from "./color.js";
 import { Ray } from "./ray.js";
+import {Sphere} from "./sphere.js";
 
-function hit_sphere(center, radius, r) {
-  const oc = sub(r.origin, center);
-  const a = r.direction.length_squared();
-  const half_b = dot(oc, r.direction);
-  const c = oc.length_squared() - radius * radius;
-  const discriminant = half_b * half_b - a * c;
-  if (discriminant < 0) {
-    return -1.0;
-  } else {
-    return (-half_b - Math.sqrt(discriminant)) / a;
-  }
-}
+const s = new Sphere(new Point3(0, 0, -1), 0.5);
 
 function ray_color(r) {
-  let t = hit_sphere(new Point3(0, 0, -1), 0.5, r);
+  let t;
+  const hitRecord = s.hit(r, 0, Number.POSITIVE_INFINITY);
 
-  if (t > 0) {
+  if (hitRecord !== null) {
+    t = hitRecord.t;
     const N = unit_vector(sub(r.at(t), new Vec3(0, 0, -1)));
     return mul(0.5, new Color(N.x + 1, N.y + 1, N.z + 1));
   }
