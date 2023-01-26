@@ -1,15 +1,27 @@
-import { add, mul, Color, Point3, Vec3, sub, unit_vector } from "./vec3.js";
+import { add, mul, dot, Color, Point3, Vec3, sub, unit_vector } from "./vec3.js";
 import { writeColor } from "./color.js";
 import { Ray } from "./ray.js";
 
+function hit_sphere(center, radius, r) {
+  const oc = sub(r.origin, center);
+  const a = dot(r.direction, r.direction);
+  const b = 2.0 * dot(oc, r.direction);
+  const c = dot(oc, oc) - radius * radius;
+  const discriminant = b * b - 4 * a * c;
+  return discriminant > 0;
+}
+
 function ray_color(r) {
+  if (hit_sphere(new Point3(0, 0, -1), 0.5, r)) {
+    return new Color(1.0, 0, 0);
+  }
+
   const unit_direction = unit_vector(r.direction);
-  const t = 0.5 * (unit_direction.y + 1.0);
+  const t = 0.5 * (unit_direction.y + 1);
   return add(
-    mul(1 - t, new Color(1.0, 1.0, 1.0)),
-    mul(t, new Color(0.5, 0.7, 1.0))
+    mul(1 - t, new Color(1, 1, 1)),
+    mul(t, new Color(0.5, 0.7, 1))
   );
-  //return new Color(1.0, 0, 0);
 }
 
 onmessage = function (e) {
