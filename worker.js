@@ -1,8 +1,8 @@
-import { add, mul, Color, Point3, Vec3, sub, unit_vector } from "./vec3.js";
+import { add, mul, Color, Point3, unit_vector } from "./vec3.js";
 import { writeColor } from "./color.js";
-import { Ray } from "./ray.js";
 import { Sphere } from "./sphere.js";
 import { HittableList } from "./hittable-list.js";
+import { Camera } from "./camera.js";
 
 function ray_color(r, world) {
   let t;
@@ -22,11 +22,10 @@ onmessage = function (e) {
   const { image_width, image_height, pixels } = e.data;
   // Image
   const aspect_ratio = image_width / image_height;
+  const samples_per_pixel = 100;
 
   // Camera
-  const viewport_height = 2.0;
-  const viewport_width = aspect_ratio * viewport_height;
-  const focal_length = 1;
+  const cam = new Camera(aspect_ratio);
 
   // World
   const world = new HittableList(
@@ -34,38 +33,24 @@ onmessage = function (e) {
     new Sphere(new Point3(0, -100.5, -1), 100)
   );
 
-  const origin = new Point3(0, 0, 0);
-  const horizontal = new Vec3(viewport_width, 0, 0);
-  const vertical = new Vec3(0, viewport_height, 0);
-  const lower_left_corner = sub(
-    origin,
-    mul(0.5, horizontal),
-    mul(0.5, vertical),
-    new Vec3(0, 0, focal_length)
-  );
-
   let idx = 0;
   for (let j = image_height - 1; j >= 0; --j) {
-    if (j % 15 === 0) {
+    if (j % Math.round(image_height / 10) === 0) {
       postMessage({
         progress: Math.round((100 * (image_height - j)) / image_height),
       });
     }
     for (let i = 0; i < image_width; ++i) {
-      const u = i / (image_width - 1);
-      const v = j / (image_height - 1);
+      const color = new Color(0, 0, 0);
+      for (let s = 0; s < samples_per_pixel; ++s) {
+        const u = (i + Math.random()) / (image_width - 1);
+        const v = (j + Math.random()) / (image_height - 1);
 
-      const r = new Ray(
-        origin,
-        add(
-          lower_left_corner,
-          mul(u, horizontal),
-          mul(v, vertical),
-          mul(-1, origin)
-        )
-      );
+        const r = cam.get_ray(u, v);
+        color.addInPlace(ray_color(r, world))
+      }
 
-      idx = writeColor(pixels, idx, ray_color(r, world));
+      idx = writeColor(pixels, idx, color, samples_per_pixel);
     }
   }
 
