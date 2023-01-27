@@ -46,10 +46,9 @@ function ray_color(r, world, depth) {
 }
 
 onmessage = function (e) {
-  const { image_width, image_height, pixels } = e.data;
+  const { image_width, image_height, pixels, samples_per_pixel } = e.data;
   // Image
   const aspect_ratio = image_width / image_height;
-  const samples_per_pixel = 100;
   const max_depth = 50;
 
   // Camera
