@@ -6,6 +6,8 @@ import {
   Point3,
   unit_vector,
   random_in_unit_sphere,
+  //random_unit_vector,
+  //random_in_hemisphere,
 } from "./vec3.js";
 import { writeColor } from "./color.js";
 import { Sphere } from "./sphere.js";
@@ -23,9 +25,18 @@ function ray_color(r, world, depth) {
 
   if (hitRecord) {
     const target = add(hitRecord.p, hitRecord.normal, random_in_unit_sphere());
+    //const target = add(hitRecord.p, hitRecord.normal, random_unit_vector());
+    //const target = add(
+    //hitRecord.p,
+    //random_in_hemisphere(hitRecord.normal)
+    //);
     return mul(
       0.5,
-      ray_color(new Ray(hitRecord.p, sub(target, hitRecord.p)), world, depth - 1)
+      ray_color(
+        new Ray(hitRecord.p, sub(target, hitRecord.p)),
+        world,
+        depth - 1
+      )
     );
   }
 

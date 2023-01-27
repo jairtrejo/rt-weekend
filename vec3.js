@@ -14,7 +14,7 @@ export class Vec3 {
   }
 
   negated() {
-    new Vec3(-this.e[0], -this.e[1], -this.e[2]);
+    return new Vec3(-this.e[0], -this.e[1], -this.e[2]);
   }
 
   addInPlace(v) {
@@ -121,5 +121,18 @@ export function random_in_unit_sphere() {
     const p = Vec3.random_in_range(-1, 1);
     if (p.length_squared() >= 1) continue;
     return p;
+  }
+}
+
+export function random_unit_vector() {
+  return unit_vector(random_in_unit_sphere());
+}
+
+export function random_in_hemisphere(normal) {
+  const in_unit_sphere = random_in_unit_sphere();
+  if (dot(in_unit_sphere, normal) > 0) {
+    return in_unit_sphere;
+  } else {
+    return in_unit_sphere.negated();
   }
 }
