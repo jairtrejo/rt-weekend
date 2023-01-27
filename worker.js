@@ -19,7 +19,7 @@ function ray_color(r, world, depth) {
   }
 
   let t;
-  const hitRecord = world.hit(r, 0, Number.POSITIVE_INFINITY);
+  const hitRecord = world.hit(r, 0.001, Number.POSITIVE_INFINITY);
 
   if (hitRecord) {
     const target = add(hitRecord.p, hitRecord.normal, random_in_unit_sphere());

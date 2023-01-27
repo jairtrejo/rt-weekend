@@ -4,9 +4,9 @@ export function writeColor(pixels, idx, pixel_color, samples_per_pixel) {
   let b = pixel_color.z;
 
   const scale = 1 / samples_per_pixel;
-  r *= scale;
-  g *= scale;
-  b *= scale;
+  r = Math.sqrt(scale * r);
+  g = Math.sqrt(scale * g);
+  b = Math.sqrt(scale * b);
 
   pixels[idx] = Math.round(255 * r);
   pixels[idx + 1] = Math.round(255 * g);
