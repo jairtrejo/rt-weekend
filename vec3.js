@@ -39,6 +39,18 @@ export class Vec3 {
     const e = this.e;
     return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
   }
+
+  static random() {
+    return new Vec3(Math.random(), Math.random(), Math.random());
+  }
+
+  static random_in_range(min, max) {
+    return new Vec3(
+      min + Math.random() * (max - min),
+      min + Math.random() * (max - min),
+      min + Math.random() * (max - min)
+    );
+  }
 }
 
 export const Color = Vec3;
@@ -100,4 +112,14 @@ export function cross(u, v) {
 
 export function unit_vector(v) {
   return mul(v, 1 / v.length());
+}
+
+// Random utilities
+
+export function random_in_unit_sphere() {
+  while (true) {
+    const p = Vec3.random_in_range(-1, 1);
+    if (p.length_squared() >= 1) continue;
+    return p;
+  }
 }

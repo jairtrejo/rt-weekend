@@ -1,16 +1,32 @@
-import { add, mul, Color, Point3, unit_vector } from "./vec3.js";
+import {
+  add,
+  mul,
+  sub,
+  Color,
+  Point3,
+  unit_vector,
+  random_in_unit_sphere,
+} from "./vec3.js";
 import { writeColor } from "./color.js";
 import { Sphere } from "./sphere.js";
 import { HittableList } from "./hittable-list.js";
 import { Camera } from "./camera.js";
+import { Ray } from "./ray.js";
 
-function ray_color(r, world) {
+function ray_color(r, world, depth) {
+  if (depth <= 0) {
+    return new Color(0, 0, 0);
+  }
+
   let t;
   const hitRecord = world.hit(r, 0, Number.POSITIVE_INFINITY);
 
   if (hitRecord) {
-    t = hitRecord.t;
-    return mul(0.5, add(hitRecord.normal, new Color(1, 1, 1)));
+    const target = add(hitRecord.p, hitRecord.normal, random_in_unit_sphere());
+    return mul(
+      0.5,
+      ray_color(new Ray(hitRecord.p, sub(target, hitRecord.p)), world, depth - 1)
+    );
   }
 
   const unit_direction = unit_vector(r.direction);
@@ -23,6 +39,7 @@ onmessage = function (e) {
   // Image
   const aspect_ratio = image_width / image_height;
   const samples_per_pixel = 100;
+  const max_depth = 50;
 
   // Camera
   const cam = new Camera(aspect_ratio);
@@ -47,7 +64,7 @@ onmessage = function (e) {
         const v = (j + Math.random()) / (image_height - 1);
 
         const r = cam.get_ray(u, v);
-        color.addInPlace(ray_color(r, world))
+        color.addInPlace(ray_color(r, world, max_depth));
       }
 
       idx = writeColor(pixels, idx, color, samples_per_pixel);

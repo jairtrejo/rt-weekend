@@ -2,8 +2,8 @@ const canvas = document.getElementById("canvas");
 const progressIndicator = document.getElementById("progress");
 const ctx = canvas.getContext("2d");
 
-const WIDTH = 1024;
-const HEIGHT = 576;
+const WIDTH = 512;
+const HEIGHT = 288;
 
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
