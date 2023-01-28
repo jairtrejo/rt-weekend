@@ -1,19 +1,9 @@
-import {
-  add,
-  mul,
-  sub,
-  Color,
-  Point3,
-  unit_vector,
-  random_in_unit_sphere,
-  //random_unit_vector,
-  //random_in_hemisphere,
-} from "./vec3.js";
+import { add, mul, Color, Point3, unit_vector } from "./vec3.js";
 import { writeColor } from "./color.js";
 import { Sphere } from "./sphere.js";
 import { HittableList } from "./hittable-list.js";
 import { Camera } from "./camera.js";
-import { Ray } from "./ray.js";
+import { Lambertian, Metal } from "./material.js";
 
 function ray_color(r, world, depth) {
   if (depth <= 0) {
@@ -24,20 +14,13 @@ function ray_color(r, world, depth) {
   const hitRecord = world.hit(r, 0.001, Number.POSITIVE_INFINITY);
 
   if (hitRecord) {
-    const target = add(hitRecord.p, hitRecord.normal, random_in_unit_sphere());
-    //const target = add(hitRecord.p, hitRecord.normal, random_unit_vector());
-    //const target = add(
-    //hitRecord.p,
-    //random_in_hemisphere(hitRecord.normal)
-    //);
-    return mul(
-      0.5,
-      ray_color(
-        new Ray(hitRecord.p, sub(target, hitRecord.p)),
-        world,
-        depth - 1
-      )
-    );
+    const scattering = hitRecord.material.scatter(r, hitRecord);
+    if (scattering) {
+      const { attenuation, scattered } = scattering;
+      return mul(attenuation, ray_color(scattered, world, depth - 1));
+    } else {
+      return new Color(0, 0, 0);
+    }
   }
 
   const unit_direction = unit_vector(r.direction);
@@ -55,9 +38,16 @@ onmessage = function (e) {
   const cam = new Camera(aspect_ratio);
 
   // World
+  const ground = new Lambertian(new Color(0.8, 0.8, 0));
+  const center = new Lambertian(new Color(0.7, 0.3, 0.3));
+  const left = new Metal(new Color(0.8, 0.8, 0.8));
+  const right = new Metal(new Color(0.8, 0.6, 0.2));
+
   const world = new HittableList(
-    new Sphere(new Point3(0, 0, -1), 0.5),
-    new Sphere(new Point3(0, -100.5, -1), 100)
+    new Sphere(new Point3(0, -100.5, -1), 100, ground),
+    new Sphere(new Point3(0, 0, -1), 0.5, center),
+    new Sphere(new Point3(-1, 0, -1), 0.5, left),
+    new Sphere(new Point3(1, 0, -1), 0.5, right)
   );
 
   let idx = 0;

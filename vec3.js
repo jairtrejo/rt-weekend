@@ -40,6 +40,15 @@ export class Vec3 {
     return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
   }
 
+  near_zero() {
+    const s = 1e-8;
+    return (
+      Math.abs(this.e[0] < s) &&
+      Math.abs(this.e[1] < s) &&
+      Math.abs(this.e[2] < s)
+    );
+  }
+
   static random() {
     return new Vec3(Math.random(), Math.random(), Math.random());
   }
@@ -112,6 +121,10 @@ export function cross(u, v) {
 
 export function unit_vector(v) {
   return mul(v, 1 / v.length());
+}
+
+export function reflect(v, n) {
+  return sub(v, mul(2 * dot(v, n), n));
 }
 
 // Random utilities

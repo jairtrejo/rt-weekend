@@ -42,7 +42,7 @@ function render() {
   const numWorkers = Math.round(navigator.hardwareConcurrency / 2);
   const images = [];
   const progresses = [];
-  for(let i=0;i<numWorkers;++i){
+  for (let i = 0; i < numWorkers; ++i) {
     images.push(null);
     progresses.push(0);
   }

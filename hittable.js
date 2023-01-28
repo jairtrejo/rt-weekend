@@ -1,4 +1,4 @@
-import { dot } from "./vec3";
+import { sub, dot, Vec3 } from "./vec3";
 
 export class Hittable {
   hit() {

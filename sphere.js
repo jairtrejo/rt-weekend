@@ -2,10 +2,11 @@ import { Hittable } from "./hittable.js";
 import { sub, dot, mul } from "./vec3.js";
 
 export class Sphere extends Hittable {
-  constructor(center, radius) {
+  constructor(center, radius, material) {
     super();
     this.center = center;
     this.radius = radius;
+    this.material = material;
   }
 
   hit(r, t_min, t_max) {
@@ -32,6 +33,6 @@ export class Sphere extends Hittable {
     const p = r.at(root);
     const normal = mul(1 / this.radius, sub(p, this.center));
 
-    return { t, p, ...Hittable.to_face_normal(r, normal) };
+    return { t, p, material: this.material, ...Hittable.to_face_normal(r, normal) };
   }
 }
