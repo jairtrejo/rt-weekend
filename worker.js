@@ -3,7 +3,7 @@ import { writeColor } from "./color.js";
 import { Sphere } from "./sphere.js";
 import { HittableList } from "./hittable-list.js";
 import { Camera } from "./camera.js";
-import { Lambertian, Metal } from "./material.js";
+import { Dielectric, Lambertian, Metal } from "./material.js";
 
 function ray_color(r, world, depth) {
   if (depth <= 0) {
@@ -39,8 +39,8 @@ onmessage = function (e) {
 
   // World
   const ground = new Lambertian(new Color(0.8, 0.8, 0));
-  const center = new Lambertian(new Color(0.7, 0.3, 0.3));
-  const left = new Metal(new Color(0.8, 0.8, 0.8), 0.3);
+  const center = new Dielectric(1.5);
+  const left = new Dielectric(1.5);
   const right = new Metal(new Color(0.8, 0.6, 0.2), 1.0);
 
   const world = new HittableList(

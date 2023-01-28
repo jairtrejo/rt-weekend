@@ -127,6 +127,17 @@ export function reflect(v, n) {
   return sub(v, mul(2 * dot(v, n), n));
 }
 
+export function refract(uv, n, etai_over_etat) {
+  const cos_theta = Math.min(dot(mul(-1, uv), n), 1);
+  const r_out_perp = mul(etai_over_etat, add(uv, mul(cos_theta, n)));
+  const r_out_parallel = mul(
+    -Math.sqrt(Math.abs(1 - r_out_perp.length_squared())),
+    n
+  );
+
+  return add(r_out_perp, r_out_parallel);
+}
+
 // Random utilities
 
 export function random_in_unit_sphere() {

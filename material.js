@@ -6,7 +6,9 @@ import {
   random_in_unit_sphere,
   random_unit_vector,
   reflect,
+  refract,
   unit_vector,
+  Color
 } from "./vec3";
 
 export class Lambertian {
@@ -47,5 +49,27 @@ export class Metal {
     } else {
       return null;
     }
+  }
+}
+
+export class Dielectric {
+  constructor(index_of_refraction) {
+    this.ir = index_of_refraction;
+  }
+
+  scatter(r_in, hit_record) {
+    const refraction_ratio = hit_record.front_face ? 1 / this.ir : this.ir;
+
+    const unit_direction = unit_vector(r_in.direction);
+    const refracted = refract(
+      unit_direction,
+      hit_record.normal,
+      refraction_ratio
+    );
+
+    return {
+      attenuation: new Color(1, 1, 1),
+      scattered: new Ray(hit_record.p, refracted),
+    };
   }
 }
