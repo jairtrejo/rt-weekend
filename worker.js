@@ -1,4 +1,4 @@
-import { add, mul, Color, Point3, Vec3, unit_vector } from "./vec3.js";
+import { add, mul, Color, Point3, Vec3, unit_vector, sub } from "./vec3.js";
 import { writeColor } from "./color.js";
 import { Sphere } from "./sphere.js";
 import { HittableList } from "./hittable-list.js";
@@ -35,12 +35,19 @@ onmessage = function (e) {
   const max_depth = 50;
 
   // Camera
+  const lookfrom = new Point3(3, 3, 2);
+  const lookat = new Point3(0, 0, -1);
+  const vup = new Vec3(0, 1, 0);
+  const dist_to_focus = sub(lookfrom, lookat).length();
+  const aperture = 2;
   const cam = new Camera(
-    new Point3(-2, 2, 1),
-    new Point3(0, 0, -1),
-    new Vec3(0, 1, 0),
+    lookfrom,
+    lookat,
+    vup,
     20,
-    aspect_ratio
+    aspect_ratio,
+    aperture,
+    dist_to_focus
   );
 
   // World

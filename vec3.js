@@ -160,3 +160,11 @@ export function random_in_hemisphere(normal) {
     return in_unit_sphere.negated();
   }
 }
+
+export function random_in_unit_disk() {
+  while (true) {
+    const p = new Vec3(-1 + 2 * Math.random(), -1 + 2 * Math.random(), 0);
+    if (p.length_squared() >= 1) continue;
+    return p;
+  }
+}
