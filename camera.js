@@ -1,33 +1,35 @@
 import { Ray } from "./ray";
-import { add, sub, mul, Vec3, Point3 } from "./vec3.js";
+import { add, sub, mul, unit_vector, cross } from "./vec3.js";
 
 export class Camera {
-  constructor(vfov, aspect_ratio) {
+  constructor(lookfrom, lookat, vup, vfov, aspect_ratio) {
     const theta = (Math.PI * vfov) / 180;
     const h = Math.tan(theta / 2);
     const viewport_height = 2.0 * h;
     const viewport_width = aspect_ratio * viewport_height;
 
-    const focal_length = 1;
+    const w = unit_vector(sub(lookfrom, lookat));
+    const u = unit_vector(cross(vup, w));
+    const v = cross(w, u);
 
-    this.origin = new Point3(0, 0, 0);
-    this.horizontal = new Vec3(viewport_width, 0, 0);
-    this.vertical = new Vec3(0, viewport_height, 0);
+    this.origin = lookfrom;
+    this.horizontal = mul(viewport_width, u);
+    this.vertical = mul(viewport_height, v);
     this.lower_left_corner = sub(
       this.origin,
       mul(0.5, this.horizontal),
       mul(0.5, this.vertical),
-      new Vec3(0, 0, focal_length)
+      w
     );
   }
 
-  get_ray(u, v) {
+  get_ray(s, t) {
     return new Ray(
       this.origin,
       add(
         this.lower_left_corner,
-        mul(u, this.horizontal),
-        mul(v, this.vertical),
+        mul(s, this.horizontal),
+        mul(t, this.vertical),
         mul(-1, this.origin)
       )
     );

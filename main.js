@@ -5,8 +5,8 @@ const ctx = canvas.getContext("2d");
 
 const WIDTH = 1024;
 const HEIGHT = 576;
-//const WIDTH = 512;
-//const HEIGHT = 288;
+//const WIDTH = 256;
+//const HEIGHT = 144;
 
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
