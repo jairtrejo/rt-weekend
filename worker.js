@@ -39,7 +39,7 @@ onmessage = function (e) {
 
   // World
   const ground = new Lambertian(new Color(0.8, 0.8, 0));
-  const center = new Dielectric(1.5);
+  const center = new Lambertian(new Color(0.1, 0.2, 0.5));
   const left = new Dielectric(1.5);
   const right = new Metal(new Color(0.8, 0.6, 0.2), 1.0);
 

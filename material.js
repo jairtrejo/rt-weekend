@@ -61,15 +61,21 @@ export class Dielectric {
     const refraction_ratio = hit_record.front_face ? 1 / this.ir : this.ir;
 
     const unit_direction = unit_vector(r_in.direction);
-    const refracted = refract(
-      unit_direction,
-      hit_record.normal,
-      refraction_ratio
-    );
+    const cos_theta = Math.min(dot(mul(-1, unit_direction), hit_record.normal), 1);
+    const sin_theta = Math.sqrt(1 - cos_theta*cos_theta);
+
+    const cannot_refract = refraction_ratio * sin_theta > 1;
+
+    let direction;
+    if (cannot_refract) {
+      direction = reflect(unit_direction, hit_record.normal);
+    } else {
+      direction = refract(unit_direction, hit_record.normal, refraction_ratio);
+    }
 
     return {
       attenuation: new Color(1, 1, 1),
-      scattered: new Ray(hit_record.p, refracted),
+      scattered: new Ray(hit_record.p, direction),
     };
   }
 }
