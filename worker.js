@@ -35,21 +35,29 @@ onmessage = function (e) {
   const max_depth = 50;
 
   // Camera
-  const cam = new Camera(aspect_ratio);
+  const cam = new Camera(90, aspect_ratio);
 
   // World
-  const ground = new Lambertian(new Color(0.8, 0.8, 0));
-  const center = new Lambertian(new Color(0.1, 0.2, 0.5));
-  const left = new Dielectric(1.5);
-  const right = new Metal(new Color(0.8, 0.6, 0.2), 1.0);
+  const R = Math.cos(Math.PI / 4);
+  const left = new Lambertian(new Color(0, 0, 1));
+  const right = new Lambertian(new Color(1, 0, 0));
 
   const world = new HittableList(
-    new Sphere(new Point3(0, -100.5, -1), 100, ground),
-    new Sphere(new Point3(0, 0, -1), 0.5, center),
-    new Sphere(new Point3(-1, 0, -1), 0.5, left),
-    new Sphere(new Point3(-1, 0, -1), -0.4, left),
-    new Sphere(new Point3(1, 0, -1), 0.5, right)
+    new Sphere(new Point3(-R, 0, -1), R, left),
+    new Sphere(new Point3(R, 0, -1), R, right)
   );
+  //const ground = new Lambertian(new Color(0.8, 0.8, 0));
+  //const center = new Lambertian(new Color(0.1, 0.2, 0.5));
+  //const left = new Dielectric(1.5);
+  //const right = new Metal(new Color(0.8, 0.6, 0.2), 1.0);
+
+  //const world = new HittableList(
+  //new Sphere(new Point3(0, -100.5, -1), 100, ground),
+  //new Sphere(new Point3(0, 0, -1), 0.5, center),
+  //new Sphere(new Point3(-1, 0, -1), 0.5, left),
+  //new Sphere(new Point3(-1, 0, -1), -0.4, left),
+  //new Sphere(new Point3(1, 0, -1), 0.5, right)
+  //);
 
   let idx = 0;
   for (let j = image_height - 1; j >= 0; --j) {
