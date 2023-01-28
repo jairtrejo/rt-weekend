@@ -47,6 +47,7 @@ onmessage = function (e) {
     new Sphere(new Point3(0, -100.5, -1), 100, ground),
     new Sphere(new Point3(0, 0, -1), 0.5, center),
     new Sphere(new Point3(-1, 0, -1), 0.5, left),
+    new Sphere(new Point3(-1, 0, -1), -0.4, left),
     new Sphere(new Point3(1, 0, -1), 0.5, right)
   );
 
