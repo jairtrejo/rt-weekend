@@ -40,8 +40,8 @@ onmessage = function (e) {
   // World
   const ground = new Lambertian(new Color(0.8, 0.8, 0));
   const center = new Lambertian(new Color(0.7, 0.3, 0.3));
-  const left = new Metal(new Color(0.8, 0.8, 0.8));
-  const right = new Metal(new Color(0.8, 0.6, 0.2));
+  const left = new Metal(new Color(0.8, 0.8, 0.8), 0.3);
+  const right = new Metal(new Color(0.8, 0.6, 0.2), 1.0);
 
   const world = new HittableList(
     new Sphere(new Point3(0, -100.5, -1), 100, ground),

@@ -1,5 +1,13 @@
 import { Ray } from "./ray";
-import { add, dot, random_unit_vector, reflect, unit_vector } from "./vec3";
+import {
+  add,
+  dot,
+  mul,
+  random_in_unit_sphere,
+  random_unit_vector,
+  reflect,
+  unit_vector,
+} from "./vec3";
 
 export class Lambertian {
   constructor(albedo) {
@@ -21,13 +29,17 @@ export class Lambertian {
 }
 
 export class Metal {
-  constructor(a) {
+  constructor(a, f) {
     this.albedo = a;
+    this.fuzz = f;
   }
 
   scatter(r_in, hit_record) {
     const reflected = reflect(unit_vector(r_in.direction), hit_record.normal);
-    const scattered = new Ray(hit_record.p, reflected);
+    const scattered = new Ray(
+      hit_record.p,
+      add(reflected, mul(this.fuzz, random_in_unit_sphere()))
+    );
     const attenuation = this.albedo;
 
     if (dot(scattered.direction, hit_record.normal) > 0) {
