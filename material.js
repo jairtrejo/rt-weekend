@@ -14,6 +14,7 @@ import {
 export class Lambertian {
   constructor(albedo) {
     this.albedo = albedo;
+    this._type = 'Lambertian';
   }
 
   scatter(_, hit_record) {
@@ -34,6 +35,7 @@ export class Metal {
   constructor(a, f) {
     this.albedo = a;
     this.fuzz = f;
+    this._type = 'Metal';
   }
 
   scatter(r_in, hit_record) {
@@ -55,6 +57,7 @@ export class Metal {
 export class Dielectric {
   constructor(index_of_refraction) {
     this.ir = index_of_refraction;
+    this._type = 'Dielectric';
   }
 
   scatter(r_in, hit_record) {

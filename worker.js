@@ -1,4 +1,4 @@
-import { add, mul, Color, Point3, Vec3, unit_vector, sub } from "./vec3.js";
+import { add, mul, Color, Point3, Vec3, unit_vector } from "./vec3.js";
 import { writeColor } from "./color.js";
 import { Sphere } from "./sphere.js";
 import { HittableList } from "./hittable-list.js";
@@ -29,17 +29,23 @@ function ray_color(r, world, depth) {
 }
 
 onmessage = function (e) {
-  const { image_width, image_height, pixels, samples_per_pixel } = e.data;
+  const {
+    image_width,
+    image_height,
+    pixels,
+    samples_per_pixel,
+    world,
+  } = e.data;
   // Image
   const aspect_ratio = image_width / image_height;
   const max_depth = 50;
 
   // Camera
-  const lookfrom = new Point3(3, 3, 2);
-  const lookat = new Point3(0, 0, -1);
+  const lookfrom = new Point3(13, 2, 3);
+  const lookat = new Point3(0, 0, 0);
   const vup = new Vec3(0, 1, 0);
-  const dist_to_focus = sub(lookfrom, lookat).length();
-  const aperture = 2;
+  const dist_to_focus = 10;
+  const aperture = 0.1;
   const cam = new Camera(
     lookfrom,
     lookat,
@@ -51,18 +57,22 @@ onmessage = function (e) {
   );
 
   // World
-  const ground = new Lambertian(new Color(0.8, 0.8, 0));
-  const center = new Lambertian(new Color(0.1, 0.2, 0.5));
-  const left = new Dielectric(1.5);
-  const right = new Metal(new Color(0.8, 0.6, 0.2), 0.0);
+  Object.setPrototypeOf(world, HittableList.prototype);
 
-  const world = new HittableList(
-    new Sphere(new Point3(0, -100.5, -1), 100, ground),
-    new Sphere(new Point3(0, 0, -1), 0.5, center),
-    new Sphere(new Point3(-1, 0, -1), 0.5, left),
-    new Sphere(new Point3(-1, 0, -1), -0.45, left),
-    new Sphere(new Point3(1, 0, -1), 0.5, right)
-  );
+  for (let sphere of world.objects) {
+    Object.setPrototypeOf(sphere, Sphere.prototype);
+    Object.setPrototypeOf(sphere.center, Vec3.prototype);
+
+    if (sphere.material._type === "Lambertian") {
+      Object.setPrototypeOf(sphere.material, Lambertian.prototype);
+      Object.setPrototypeOf(sphere.material.albedo, Vec3.prototype);
+    } else if (sphere.material._type === "Metal") {
+      Object.setPrototypeOf(sphere.material, Metal.prototype);
+      Object.setPrototypeOf(sphere.material.albedo, Vec3.prototype);
+    } else if (sphere.material._type === "Dielectric") {
+      Object.setPrototypeOf(sphere.material, Dielectric.prototype);
+    }
+  }
 
   let idx = 0;
   for (let j = image_height - 1; j >= 0; --j) {
